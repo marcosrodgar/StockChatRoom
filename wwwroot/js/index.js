@@ -1,4 +1,4 @@
-﻿"use strict";
+﻿
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
@@ -23,6 +23,20 @@ connection.start().then(function () {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var user = document.getElementById("userInput").value;
     var message = document.getElementById("messageInput").value;
+    var data = { content: message };
+
+    fetch("/api/ChatMessages", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        if (!response.ok) {
+            console.log(response);    
+        }
+    });
+
     connection.invoke("SendMessage", user, message).catch(function (err) {
         return console.error(err.toString());
     });

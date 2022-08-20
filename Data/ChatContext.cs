@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using StockBotChatRoom.Data.Entities;
 
 namespace StockBotChatRoom.Data
 {
-    public class ChatContext : DbContext
+    public class ChatContext : IdentityDbContext<ChatUser>
     {
         private readonly IConfiguration _config;
 

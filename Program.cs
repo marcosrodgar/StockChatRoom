@@ -14,6 +14,7 @@ builder.Services.AddDbContext<ChatContext>(cfg =>
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -27,12 +28,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.MapRazorPages();
+app.MapControllers();
+
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
