@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StockBotChatRoom.Data;
+using StockBotChatRoom.Data.Repositories;
 using StockBotChatRoom.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<ChatContext>(cfg =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 
 var app = builder.Build();
 
