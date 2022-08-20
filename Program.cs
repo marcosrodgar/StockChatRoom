@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using StockBotChatRoom.Data;
 using StockBotChatRoom.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<ChatContext>(cfg =>
+{
+    cfg.UseSqlServer();
+});
+
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 
