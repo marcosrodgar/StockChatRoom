@@ -19,11 +19,8 @@ namespace StockBotChatRoom.Pages
            _chatMessageRepository = chatMessageRepository;
         }
 
-        public IEnumerable<ChatMessage> MostRecentChatMessages { get; set; }
-        public void OnGet()
-        {
-            MostRecentChatMessages = _chatMessageRepository.GetMostRecentMessages();
-        }
+        
+     
 
        
     }

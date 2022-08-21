@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using StockBotChatRoom.Data;
 using StockBotChatRoom.Data.Entities;
 using StockBotChatRoom.Data.Repositories;
+using StockBotChatRoom.Models;
 
 namespace StockBotChatRoom.Controllers
 {
@@ -29,7 +30,7 @@ namespace StockBotChatRoom.Controllers
 
         // GET: api/ChatMessages
         [HttpGet]
-        public ActionResult<IEnumerable<ChatMessage>> GetChatMessages()
+        public ActionResult<IEnumerable<ChatMessageModel>> GetChatMessages()
         {
             return Ok(_chatMessageRepository.GetMostRecentMessages());
         }
@@ -49,7 +50,7 @@ namespace StockBotChatRoom.Controllers
             _chatMessageRepository.AddMessage(chatMessage);
             _chatMessageRepository.SaveChanges();
 
-            return Ok(chatMessage);
+            return chatMessage;
         }
 
           

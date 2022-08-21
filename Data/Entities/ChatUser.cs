@@ -4,6 +4,6 @@ namespace StockBotChatRoom.Data.Entities
 {
     public class ChatUser : IdentityUser
     {
-
+       
     }
 }

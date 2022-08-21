@@ -20,7 +20,8 @@ builder.Services.AddDefaultIdentity<ChatUser>()
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddRazorRuntimeCompilation();
+
 
 var app = builder.Build();
 
