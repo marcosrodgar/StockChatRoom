@@ -2,14 +2,20 @@ using Microsoft.EntityFrameworkCore;
 using StockBotChatRoom.Data;
 using StockBotChatRoom.Data.Repositories;
 using StockBotChatRoom.Hubs;
+using Microsoft.AspNetCore.Identity;
+using StockBotChatRoom.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("ChatContextDb") ?? throw new InvalidOperationException("Connection string 'ChatContextConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddDbContext<ChatContext>(cfg =>
 {
     cfg.UseSqlServer();
 });
+
+builder.Services.AddDefaultIdentity<ChatUser>()
+    .AddEntityFrameworkStores<ChatContext>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
