@@ -18,7 +18,7 @@ connection.on("ReceiveMessage", function (message) {
     var li = document.createElement("li");
     messageList.appendChild(li);
     var dateSentOn = new Date(message.sentOn);
-    li.textContent = `${dateSentOn.toLocaleTimeString()} - ${message.userName}: ${message.content}`;
+    li.innerHTML = `${dateSentOn.toLocaleDateString('en-US')}, ${dateSentOn.toLocaleTimeString()} - <b>${message.userName}</b>: ${message.content}`;
 });
 
 connection.start().then(function () {
@@ -30,6 +30,7 @@ connection.start().then(function () {
 
 window.onload = function loadRecentMessages() {
     document.getElementById("messageInput").disabled = true;
+
 
     fetch("/api/ChatMessages", {
         method: "GET",
@@ -51,7 +52,7 @@ window.onload = function loadRecentMessages() {
             li.setAttribute('id', `message-${i}`)
             document.getElementById("messagesList").appendChild(li);
             var dateSentOn = new Date(message.sentOn);
-            li.textContent = `${dateSentOn.toLocaleTimeString()} - ${message.userName}: ${message.content}`;
+            li.innerHTML = `${dateSentOn.toLocaleDateString('en-US')}, ${dateSentOn.toLocaleTimeString()} - <b>${message.userName}</b>: ${message.content}`;
         }
 
         document.getElementById("messageInput").disabled = false;
@@ -90,3 +91,4 @@ document.getElementById("sendButton").addEventListener("click",  function (event
     
     event.preventDefault();
 });
+
