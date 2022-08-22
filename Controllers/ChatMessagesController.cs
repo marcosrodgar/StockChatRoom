@@ -11,6 +11,8 @@ using StockBotChatRoom.Data;
 using StockBotChatRoom.Data.Entities;
 using StockBotChatRoom.Data.Repositories;
 using StockBotChatRoom.Models;
+using StockBotChatRoom.QueueMessages;
+using StockBotChatRoom.Services.Interfaces;
 
 namespace StockBotChatRoom.Controllers
 {
@@ -21,19 +23,21 @@ namespace StockBotChatRoom.Controllers
     {
         private readonly IChatMessageRepository _chatMessageRepository;
         private readonly UserManager<ChatUser> _userManager;
+        private readonly IQueueService _queueService;
 
-        public ChatMessagesController(IChatMessageRepository chatMessageRepository, UserManager<ChatUser> userManager )
+        public ChatMessagesController(IChatMessageRepository chatMessageRepository, UserManager<ChatUser> userManager, IQueueService queueService )
         {
             _chatMessageRepository = chatMessageRepository;
             _userManager = userManager;
+            _queueService = queueService;
         }
 
-        // GET: api/ChatMessages
         [HttpGet]
         public ActionResult<IEnumerable<ChatMessageModel>> GetChatMessages()
         {
             return Ok(_chatMessageRepository.GetMostRecentMessages());
         }
+
 
 
         [HttpPost]
@@ -46,6 +50,22 @@ namespace StockBotChatRoom.Controllers
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
             chatMessage.User = currentUser;
+
+            if (chatMessage.Content.Substring(0, 1) == "/")
+            {
+                chatMessage.SentOn = DateTime.UtcNow;
+                _queueService.QueueMessage(new StockCommandMessage
+                {
+                    ChatMessage = new ChatMessageModel
+                    {
+                        Content = chatMessage.Content,
+                        SentOn = chatMessage.SentOn,
+                        UserName = currentUser.UserName
+                    }
+                });
+
+                return Ok(chatMessage);
+            }
 
             _chatMessageRepository.AddMessage(chatMessage);
             _chatMessageRepository.SaveChanges();

@@ -4,6 +4,10 @@ using StockBotChatRoom.Data.Repositories;
 using StockBotChatRoom.Hubs;
 using Microsoft.AspNetCore.Identity;
 using StockBotChatRoom.Data.Entities;
+using StockBotChatRoom.Services.Interfaces;
+using StockBotChatRoom.Services;
+using Microsoft.AspNetCore.SignalR;
+using StockBotChatRoom.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ChatContextDb") ?? throw new InvalidOperationException("Connection string 'ChatContextConnection' not found.");
@@ -20,7 +24,11 @@ builder.Services.AddDefaultIdentity<ChatUser>()
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddControllers().AddRazorRuntimeCompilation();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
+builder.Services.AddHostedService<StockCommandBotService>();
+
 
 
 var app = builder.Build();
@@ -45,3 +53,6 @@ app.MapControllers();
 app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
+
+
+
