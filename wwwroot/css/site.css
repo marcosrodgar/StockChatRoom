@@ -19,14 +19,14 @@ body {
 
 #messagesContainer {
     width: 100%;
-    height:600px;
+    height:calc(100% - 140px);
     margin-top: 20px;
     border: 2px solid #191D32;
     border-radius: .5em;
     padding: 10px 10px;
     font-size: 14px;
     overflow: auto;
-    background-color:aliceblue;
+    background-color:ghostwhite;
 }
 
 #sendButton {
@@ -50,8 +50,9 @@ body {
     border: 1.5px solid #DD1155;
 }
 
-ul 
-{
+#messagesList {
     list-style: none;
+    width: 100%;
+    
 }
 
