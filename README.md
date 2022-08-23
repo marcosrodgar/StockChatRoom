@@ -6,6 +6,6 @@ be processed via a decoupled bot and will return a message which consists of a s
 # Set up guide
 This application was built using .NET 6 targeting .NET6.0 framework so you will need to install the runtime on your computer. You can find the download resources here: https://dotnet.microsoft.com/en-us/download/dotnet/6.0
 
-The bot which processes the commands uses RabbitMQ as a messagebroker. It will initiate a server on the localhost, for this you'll need to install RabbitMQ, you can read their installation guides here: https://www.rabbitmq.com/download.html
+The bot which processes the commands uses RabbitMQ as a message broker. It will initiate a server on the localhost, for this you'll need to install RabbitMQ, you can read their installation guides here: https://www.rabbitmq.com/download.html
 
 
