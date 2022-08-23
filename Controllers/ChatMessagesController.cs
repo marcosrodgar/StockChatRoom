@@ -53,7 +53,7 @@ namespace StockBotChatRoom.Controllers
 
             if (chatMessage.Content.Substring(0, 1) == "/")
             {
-                chatMessage.SentOn = DateTime.UtcNow;
+                chatMessage.SentOn = DateTime.Now;
                 _queueService.QueueMessage(new StockCommandMessage
                 {
                     ChatMessage = new ChatMessageModel

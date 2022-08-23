@@ -16,15 +16,17 @@ var connectionString = builder.Configuration.GetConnectionString("ChatContextDb"
 builder.Services.AddDbContext<ChatContext>(cfg =>
 {
     cfg.UseSqlServer();
-});
+   
+}, ServiceLifetime.Scoped);
 
 builder.Services.AddDefaultIdentity<ChatUser>()
     .AddEntityFrameworkStores<ChatContext>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
-builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+builder.Services.AddTransient<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IQueueService, QueueService>();
+builder.Services.AddTransient<IStockApiService, StockApiService>();
 builder.Services.AddControllers().AddRazorRuntimeCompilation();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
 builder.Services.AddHostedService<StockCommandBotService>();

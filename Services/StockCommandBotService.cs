@@ -9,21 +9,23 @@ using System;
 using System.Text;
 using Newtonsoft.Json;
 using StockBotChatRoom.QueueMessages;
+using Microsoft.AspNetCore.Identity;
+using StockBotChatRoom.Data.Repositories;
+using StockBotChatRoom.Data;
 
 namespace StockBotChatRoom.Services
 {
     public class StockCommandBotService : BackgroundService
     {
-        private readonly IConfiguration _config;
-        private string ApiUrl { get; set; }
-        protected readonly IServiceScopeFactory _serviceScopeFactory;
+     
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IStockApiService _stockApiService;
+  
 
-        public StockCommandBotService(IConfiguration config, IServiceScopeFactory serviceScopeFactory, IHubContext<ChatHub> chatHub)
-        {
-            _config = config;
-            _serviceScopeFactory = serviceScopeFactory;
-            ApiUrl = _config["StockApiUrl"];
-      
+        public StockCommandBotService(IServiceProvider serviceProvider, IStockApiService stockApiService)
+        {     
+            _serviceProvider = serviceProvider;
+            _stockApiService = stockApiService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -44,7 +46,8 @@ namespace StockBotChatRoom.Services
                     var bodyString = Encoding.UTF8.GetString(body);
                     var commandMessage = JsonConvert.DeserializeObject<StockCommandMessage>(bodyString);
                     Console.WriteLine(" [x] Received {0}", bodyString);
-                    ProcessCommand(commandMessage.ChatMessage);
+                    var stockQuote = ProcessCommand(commandMessage.ChatMessage);
+                    SendMessageToChatroom(stockQuote.Result);
                 };
 
                 while (!stoppingToken.IsCancellationRequested)
@@ -61,98 +64,80 @@ namespace StockBotChatRoom.Services
 
         }
 
-        public async Task<bool> ProcessCommand(ChatMessageModel message)
+        public async Task<string> ProcessCommand(ChatMessageModel message)
         {
-            var stockCode = message.Content.Split('=')[1];
-            var scope = _serviceScopeFactory.CreateScope();
-            var chatHub = scope.ServiceProvider.GetRequiredService<IHubContext<ChatHub>>();
-
-            if (string.IsNullOrEmpty(stockCode))
+            var splitMessage = message.Content.Split('=');
+            var stockCode = string.Empty;
+           
+            if(splitMessage.Length < 2)
             {
-                return false;
+                await Task.Delay(2000);
+                return $"Couldn't understand the command provided: ({message.Content}). Please try again.";
+            }
+            else
+            {
+                if (splitMessage[0].ToLower()!="/stock")
+                {
+                    return $"Couldn't understand the command provided: ({message.Content}). Please try again.";
+                }
+                stockCode = splitMessage[1];
+                if (string.IsNullOrEmpty(stockCode))
+                {
+                    await Task.Delay(2000);
+                    return $"Stock code cannot be blank. Please provide a valid stock code.";
+                }
+            }
+            
+
+            var stockPrice = await _stockApiService.GetStockPrice(stockCode);
+                
+            if(string.IsNullOrEmpty(stockPrice))
+            {
+                return $"Couldn't find stock quote for the code provided {stockCode}. Please check and try again.";                                     
             }
 
-            using(var httpClient = new HttpClient())
-            {    
-                
-                httpClient.BaseAddress = new Uri(ApiUrl);
-              
-                var response = await httpClient.GetAsync($"?s={stockCode}&f=sd2t2ohlcv&h&e=csv");
-
-                var responseStream = response.Content.ReadAsStream();
-                
-                string stockPrice = FindStockPrice(responseStream);
-                
-                if(string.IsNullOrEmpty(stockPrice))
-                {
-                    var chatMessage = new ChatMessageModel
-                    {
-                        Content = $"Couldn't find stock quote for the code provided {stockCode}. Please check and try again.",
-                        SentOn = DateTime.Now,
-                        UserName = "Stock Bot"
-                    };
-
-                    await chatHub.Clients.All.SendAsync("ReceiveMessage", chatMessage);
-                    throw new Exception("Unable to find stock price");
-                    
-                }
-                else
-                {
-                  
-                    var chatMessage = new ChatMessageModel
-                    {
-                        Content = $"{stockCode} quote is {stockPrice} per share",
-                        SentOn = DateTime.Now,
-                        UserName = "Stock Bot"
-                    };
-
-                    await chatHub.Clients.All.SendAsync("ReceiveMessage", chatMessage);
-                }
-
-            }            
-
-            return false;
-
+            return $"{stockCode.ToUpper()} quote is {stockPrice} per share";        
+           
         }
 
-        private string FindStockPrice(Stream responseStream)
+        public async void SendMessageToChatroom(string content)
         {
-            string stockPrice = string.Empty;
-            using (var reader = new StreamReader(responseStream))
+
+            using (var scope = _serviceProvider.CreateScope()) 
             {
-                int pricePosition = 0;
-                var firstLine = reader.ReadLine();
-                var headers = firstLine.Split(',');
-                for (int i = 0; i < headers.Length; i++)
+                var chatContext = scope.ServiceProvider.GetService<ChatContext>();
+
+                var botUser = chatContext.Users.Where(x => x.UserName == "StockBot").Single();
+
+                ChatMessage persistedMessage = new ChatMessage
                 {
-                    if (headers[i] == "Close")
-                    {
-                        pricePosition = i;
-                        break;
-                    }
+                    Content = content,
+                    SentOn = DateTime.Now,
+                    User = botUser
+                };
+                
+                chatContext.ChatMessages.Add(persistedMessage);
+                await chatContext.SaveChangesAsync();
 
-                }
+                var chatHub = _serviceProvider.GetRequiredService<IHubContext<ChatHub>>();
 
-                while (!reader.EndOfStream)
+                var chatMessage = new ChatMessageModel
                 {
-                    var line = reader.ReadLine();
-                    var values = line.Split(',');
+                    Content = persistedMessage.Content,
+                    SentOn = persistedMessage.SentOn,
+                    UserName = "StockBot"
+                };
 
-                    stockPrice = values[pricePosition];
+                await chatHub.Clients.All.SendAsync("ReceiveMessage", chatMessage);
 
-                 }
+
             }
 
-            var result = Decimal.TryParse(stockPrice, out decimal decimalPrice);
 
-            if (!result)
-            {
-                return string.Empty;
-            }
-
-            return stockPrice;
-         
+           
         }
+
+        
 
     
     }

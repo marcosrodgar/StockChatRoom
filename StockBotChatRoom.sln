@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockBotChatRoom", "StockBotChatRoom.csproj", "{4EC2E312-6A9E-4E2E-919E-A27F092152B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockBotChatRoom", "StockBotChatRoom.csproj", "{4EC2E312-6A9E-4E2E-919E-A27F092152B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotTests", "..\BotTests\BotTests.csproj", "{33969B3D-A93A-41AA-AA8E-2C7CF27F758B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4EC2E312-6A9E-4E2E-919E-A27F092152B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EC2E312-6A9E-4E2E-919E-A27F092152B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EC2E312-6A9E-4E2E-919E-A27F092152B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33969B3D-A93A-41AA-AA8E-2C7CF27F758B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33969B3D-A93A-41AA-AA8E-2C7CF27F758B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33969B3D-A93A-41AA-AA8E-2C7CF27F758B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33969B3D-A93A-41AA-AA8E-2C7CF27F758B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

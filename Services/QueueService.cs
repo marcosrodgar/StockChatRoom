@@ -32,7 +32,7 @@ namespace StockBotChatRoom.Services
                                      body: body);
 
                 
-                Console.WriteLine(" [x] Sent {0}", message);
+                Console.WriteLine(" [x] Sent {0}", serializedMessage);
             }
 
         }

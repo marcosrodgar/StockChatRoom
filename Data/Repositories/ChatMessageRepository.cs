@@ -15,7 +15,7 @@ namespace StockBotChatRoom.Data.Repositories
 
         public void AddMessage(ChatMessage message)
         {
-            message.SentOn = DateTime.UtcNow;
+            message.SentOn = DateTime.Now;
             _ctx.ChatMessages.Add(message);
         }
 

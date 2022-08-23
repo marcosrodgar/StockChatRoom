@@ -20,5 +20,6 @@ namespace StockBotChatRoom.Data
             optionsBuilder.UseSqlServer(_config["ConnectionStrings:ChatContextDb"]);
         }
 
+     
     }
 }
