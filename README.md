@@ -18,22 +18,22 @@ The bot which processes the commands uses RabbitMQ as a message broker. It will 
 
 # Recommended testing steps
 
-Run the application either using **dotnet run** on a command line open on the folder where you cloned the repo, or opening the solution on your preferred IDE and running it. The console window will output he port on which the application is listening for requests:
+Run the application either using **dotnet run** on a command line open on the folder where you cloned the repo, or opening the solution on your preferred IDE and running it. The console window will output the port on which the application is listening for requests:
 ![image](https://user-images.githubusercontent.com/109869725/186070638-7ce682e1-823e-468f-be0d-c23f066f4ba3.png)
 
 In the above case: 5157. You can change this port on the launchSettings.json file if you need to. 
 
 Open a browser window and paste this localhost address. It should take you to the login page, create a new user or use one of our test users available:
 
-User name: Freims
-Password: P@ssw0rd
+**User name**: Freims
+**Password**: P@ssw0rd
 
-User name: Freims2
-Password: P@ssw0rd
+**User name**: Freims2
+**Password**: P@ssw0rd
 
 Login with your user. The application should now take you to the Chat page. Open another browser window and repeat the steps. NOTE: You will probably need to open the second browser window with a different browser or the same browser on incognito mode. 
 
-Now that you have two browser windows with different users logged in. You can start testing the application by sending messages and command on the chatroom. You should see them appear on realtime.
+Now that you have two browser windows with different users logged in. You can start testing the application by sending messages and command on the chatrooms. You should see them appear on real time.
 
 
 
